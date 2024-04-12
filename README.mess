@@ -1,0 +1,29 @@
+# About cl-resvg
+This is a small bindings library to ''resvg''(https://github.com/RazrFalcon/resvg), a Rust library to render SVG images to bitmaps. It can be used as a standalone way to display SVG images.
+
+## How To
+First, ``init``ialise the library with whatever options you would like to use. We assume ``org.shirakumo.fraf.resvg`` is locally nicknamed to ``resvg``.
+
+:: common lisp
+(resvg:init)
+::
+
+You can then load an image from an in-memory buffer, string, or a file using ``make-image``:
+
+:: common lisp
+(resvg:make-image #p"my-image.svg")
+::
+
+If the image loads successfully, you can then query it with ``empty-p``, ``viewbox``, ``size``, ``bbox``, ``node-p``, and ``transform``. Finally, you can use ``render`` to render the image to a bitmap.
+
+:: common lisp
+(resvg:render *)
+::
+
+Once you are done using the image, make sure you clean it up with ``free``. For more convenient operations, you can also use the ``with-image`` macro.
+
+:: common lisp
+(resvg:free **)
+::
+
+Once you are completely done with the library, you should call ``shutdown`` to uninitialise it.
