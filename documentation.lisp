@@ -157,6 +157,7 @@ simple-array vector, by which the image is transformed before output.
 
 See IMAGE (type)
 See MAKE-TRANSFORM
+See RENDER-SCALED
 See SIZE")
 
   (function with-image
@@ -177,6 +178,18 @@ See FREE")
 X-OFFSET and Y-OFFSET represent a translation.
 X-SCALE and Y-SCALE represent a scaling.
 ANGLE represents a rotation.
+
+See RENDER")
+
+  (function render-scaled
+    "Render the image to a scaled output.
+
+Either WIDTH or HEIGHT must be specified, setting the output image's
+width or height. If one of the parameters is omitted, the other is
+computed based on the image's aspect ratio and treating the specified
+size as a uniform scaling factor.
+
+For the other parameters, see RENDER
 
 See RENDER"))
 

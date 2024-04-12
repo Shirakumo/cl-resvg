@@ -71,4 +71,5 @@
    #:transform
    #:render
    #:with-image
-   #:make-transform))
+   #:make-transform
+   #:render-scaled))

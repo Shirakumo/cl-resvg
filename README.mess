@@ -14,7 +14,7 @@ You can then load an image from an in-memory buffer, string, or a file using ``m
 (resvg:make-image #p"my-image.svg")
 ::
 
-If the image loads successfully, you can then query it with ``empty-p``, ``viewbox``, ``size``, ``bbox``, ``node-p``, and ``transform``. Finally, you can use ``render`` to render the image to a bitmap.
+If the image loads successfully, you can then query it with ``empty-p``, ``viewbox``, ``size``, ``bbox``, ``node-p``, and ``transform``. Finally, you can use ``render`` or ``render-scaled`` to render the image to a bitmap.
 
 :: common lisp
 (resvg:render *)

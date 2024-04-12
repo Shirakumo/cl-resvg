@@ -163,3 +163,14 @@
     (setf (aref arr 2) (float x-offset 0f0))
     (setf (aref arr 5) (float y-offset 0f0))
     arr))
+
+(defun render-scaled (image width height &key node output)
+  (destructuring-bind (image-width . image-height) (size image node)
+    (cond ((not (or width height))
+           (error "WIDTH or HEIGHT must be specified."))
+          (width
+           (setf height (* image-height (/ image-width width))))
+          (height
+           (setf width (* image-width (/ image-height height)))))
+    (render image :width width :height height :output output :node node
+                  :transform (make-transform :x-scale (/ width image-width) :y-scale (/ height image-height)))))
