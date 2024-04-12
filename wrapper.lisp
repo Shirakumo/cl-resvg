@@ -152,7 +152,7 @@
                          ,@body)
          (free ,var)))))
 
-(defun make-transform (&key (x-offset 0) (y-offset 0) (x-scale 1) (y-scale 1) (angle 0))
+(defun make-transform (&key (x-offset 0) (y-offset 0) (scale 1) (x-scale scale) (y-scale scale) (angle 0))
   (let ((arr (make-array 6 :element-type 'single-float :initial-element 0f0))
         (cos (cos (float angle 0f0)))
         (sin (sin (float angle 0f0))))
