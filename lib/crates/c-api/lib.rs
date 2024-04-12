@@ -612,18 +612,19 @@ pub extern "C" fn resvg_is_image_empty(tree: *const resvg_render_tree) -> bool {
 /// @param tree Render tree.
 /// @return Image size.
 #[no_mangle]
-pub extern "C" fn resvg_get_image_size(tree: *const resvg_render_tree) -> resvg_size {
+pub extern "C" fn resvg_get_image_size(tree: *const resvg_render_tree, out_size: *mut resvg_size) {
     let tree = unsafe {
         assert!(!tree.is_null());
         &*tree
     };
+    let out_size = unsafe {
+        assert!(!out_size.is_null());
+        &mut *out_size
+    };
 
     let size = tree.0.size();
-
-    resvg_size {
-        width: size.width(),
-        height: size.height(),
-    }
+    out_size.width = size.width();
+    out_size.height = size.height();
 }
 
 /// @brief Returns an image viewbox.
@@ -633,20 +634,21 @@ pub extern "C" fn resvg_get_image_size(tree: *const resvg_render_tree) -> resvg_
 /// @param tree Render tree.
 /// @return Image viewbox.
 #[no_mangle]
-pub extern "C" fn resvg_get_image_viewbox(tree: *const resvg_render_tree) -> resvg_rect {
+pub extern "C" fn resvg_get_image_viewbox(tree: *const resvg_render_tree, out_rect: *mut resvg_rect) {
     let tree = unsafe {
         assert!(!tree.is_null());
         &*tree
     };
+    let out_rect = unsafe {
+        assert!(!out_rect.is_null());
+        &mut *out_rect
+    };
 
     let r = tree.0.view_box().rect;
-
-    resvg_rect {
-        x: r.x(),
-        y: r.y(),
-        width: r.width(),
-        height: r.height(),
-    }
+    out_rect.x = r.x();
+    out_rect.y = r.y();
+    out_rect.width = r.width();
+    out_rect.height = r.height();
 }
 
 /// @brief Returns an image bounding box.
@@ -871,7 +873,7 @@ fn convert_error(e: usvg::Error) -> resvg_error {
 #[no_mangle]
 pub extern "C" fn resvg_render(
     tree: *const resvg_render_tree,
-    transform: resvg_transform,
+    transform: *const resvg_transform,
     width: u32,
     height: u32,
     pixmap: *mut c_char,
@@ -879,6 +881,10 @@ pub extern "C" fn resvg_render(
     let tree = unsafe {
         assert!(!tree.is_null());
         &*tree
+    };
+    let transform = unsafe {
+        assert!(!transform.is_null());
+        &*transform
     };
 
     let pixmap_len = width as usize * height as usize * tiny_skia::BYTES_PER_PIXEL;
@@ -905,7 +911,7 @@ pub extern "C" fn resvg_render(
 pub extern "C" fn resvg_render_node(
     tree: *const resvg_render_tree,
     id: *const c_char,
-    transform: resvg_transform,
+    transform: *const resvg_transform,
     width: u32,
     height: u32,
     pixmap: *mut c_char,
@@ -913,6 +919,10 @@ pub extern "C" fn resvg_render_node(
     let tree = unsafe {
         assert!(!tree.is_null());
         &*tree
+    };
+    let transform = unsafe {
+        assert!(!transform.is_null());
+        &*transform
     };
 
     let id = match cstr_to_str(id) {

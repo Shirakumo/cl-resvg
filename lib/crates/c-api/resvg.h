@@ -382,7 +382,7 @@ bool resvg_is_image_empty(const resvg_render_tree *tree);
  * @param tree Render tree.
  * @return Image size.
  */
-resvg_size resvg_get_image_size(const resvg_render_tree *tree);
+void resvg_get_image_size(const resvg_render_tree *tree, resvg_size size);
 
 /**
  * @brief Returns an image viewbox.
@@ -392,7 +392,7 @@ resvg_size resvg_get_image_size(const resvg_render_tree *tree);
  * @param tree Render tree.
  * @return Image viewbox.
  */
-resvg_rect resvg_get_image_viewbox(const resvg_render_tree *tree);
+void resvg_get_image_viewbox(const resvg_render_tree *tree, resvg_rect rect);
 
 /**
  * @brief Returns an image bounding box.
@@ -470,7 +470,7 @@ void resvg_tree_destroy(resvg_render_tree *tree);
  *               premultiplied RGBA8888 pixels.
  */
 void resvg_render(const resvg_render_tree *tree,
-                  resvg_transform transform,
+                  const resvg_transform *transform,
                   uint32_t width,
                   uint32_t height,
                   char *pixmap);
@@ -491,7 +491,7 @@ void resvg_render(const resvg_render_tree *tree,
  */
 bool resvg_render_node(const resvg_render_tree *tree,
                        const char *id,
-                       resvg_transform transform,
+                       const resvg_transform *transform,
                        uint32_t width,
                        uint32_t height,
                        char *pixmap);
