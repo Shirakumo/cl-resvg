@@ -1,33 +1,10 @@
-ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-OS = misc
-ARCH = misc
-EXT = so
-
-UNAME_S := $(shell uname -s)
-ifeq ($(UNAME_S),Linux)
-	OS = lin
-endif
-ifeq ($(UNAME_S),Darwin)
-	OS = mac
-	EXT = dylib
-endif
-ifneq ($(filter MINGW%,$(UNAME_S)),)
-	OS = win
-	EXT = dll
-endif
-
-UNAME_M := $(shell uname -m)
-ifeq ($(UNAME_M),x86_64)
-	ARCH = amd64
-endif
-ifneq ($(filter %86,$(UNAME_M)),)
-	ARCH = i686
-endif
-ifneq ($(filter arm%,$(UNAME_M)),)
-	ARCH = arm64
-endif
-
 all:
 	mkdir -p ../static/
-	cd crates/c-api; cargo build --release
-	cp target/release/deps/libresvg.$(EXT) ../static/libresvg-$(OS)-$(ARCH).$(EXT)
+	$(MAKE) build TARGET=x86_64-unknown-linux-gnu PLATFORM=lin-amd64 EXT=so
+	$(MAKE) build TARGET=aarch64-unknown-linux-gnu PLATFORM=lin-arm64 EXT=so RUSTFLAGS="-C linker=aarch64-linux-gnu-gcc"
+	$(MAKE) build TARGET=x86_64-pc-windows-gnu PLATFORM=win-amd64 EXT=dll
+	$(MAKE) build TARGET=x86_64-apple-darwin PLATFORM=mac-amd64 EXT=dylib
+
+build:
+	cd crates/c-api; cargo build --release --target $(TARGET) $(CARGO)
+	cp target/$(TARGET)/release/*resvg.$(EXT) ../static/libresvg-$(PLATFORM).$(EXT)
