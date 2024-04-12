@@ -42,11 +42,11 @@
 (cffi:defcstruct transform
   (elements :float :count 6))
 
-(cffi:defcstruct size
+(cffi:defcstruct (size :conc-name size-)
   (width :float)
   (height :float))
 
-(cffi:defcstruct rect
+(cffi:defcstruct (rect :conc-name rect-)
   (x :float)
   (y :float)
   (width :float)
