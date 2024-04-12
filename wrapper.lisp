@@ -10,7 +10,7 @@
 
 (defvar *options* NIL)
 
-(defun init (&key resources-dir dpi font-family font-size fonts languages shape-rendering-mode text-rendering-mode image-rendering-mode)
+(defun init (&key resources-dir dpi font-size fonts languages shape-rendering-mode text-rendering-mode image-rendering-mode)
   (let ((was-init (not (null *options*))))
     (unless (cffi:foreign-library-loaded-p 'resvg:libresvg)
       (cffi:use-foreign-library resvg:libresvg))
@@ -23,7 +23,6 @@
                      *options* ,field))))
       (%set resources-dir)
       (%set dpi)
-      (%set font-family)
       (%set font-size)
       (%set languages)
       (%set shape-rendering-mode)
@@ -31,6 +30,7 @@
       (%set image-rendering-mode)
       (loop for (k v) on fonts by #'cddr
             do (ecase k
+                 (:default (resvg:set-font-family *options* v))
                  (:serif (resvg:set-serif-family *options* v))
                  (:sans-serif (resvg:set-sans-serif-family *options* v))
                  (:cursive (resvg:set-cursive-family *options* v))

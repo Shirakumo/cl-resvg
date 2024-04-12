@@ -18,6 +18,36 @@ It is safe to call this multiple times, especially to set different
 options.
 Should be called before other functions are called.
 
+The options are as follows:
+  resources-dir         --- The directory to locate relative paths from
+  dpi                   --- Sets the target DPI (default: 96)
+  font-size             --- Sets the default font size (defalut: 12)
+  fonts                 --- Sets the default fonts. Should be a plist
+                            with the following keys, and the values
+                            being the name of the font-family to use.
+    :DEFAULT
+    :SERIF
+    :SANS-SERIF
+    :CURSIVE
+    :FANTASY
+    :MONOSPACE
+  languages             --- Sets the system languages. Should be a
+                            comma-separated string
+  shape-rendering-mode  --- Sets the rendering mode for shapes. Can be
+                            one of:
+    :OPTIMIZE-SPEED
+    :CRISP-EDGES
+    :GEOMETRIC-PRECISION
+  text-rendering-mode   --- Sets the rendering mode for text: Can be
+                            one of:
+    :OPTIMIZE-SPEED
+    :OPTIMIZE-LEGIBILITY
+    :GEOMETRIC-PRECISION
+  image-rendering-mode  --- Sets the rendering mode for images: Can be
+                            one of:
+    :OPTIMIZE-QUALITY
+    :OPTIMIZE-SPEED
+
 See LOAD-FONT
 See SHUTDOWN")
   
