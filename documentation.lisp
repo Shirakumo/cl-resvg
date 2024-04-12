@@ -155,4 +155,16 @@ If the TRANSFORM is given, it should be a 3x2 single-float
 simple-array vector, by which the image is transformed before output.
 
 See IMAGE (type)
-See SIZE"))
+See SIZE")
+
+  (function with-image
+    "Convenience macro to lexically bind an image.
+
+Calls INIT with the supplied options, then binds IMAGE to the result
+of MAKE-IMAGE on SOURCE. Upon exit of the BODY, calls FREE on the
+image.
+
+See INIT
+See IMAGE (type)
+See MAKE-IMAGE
+See FREE"))

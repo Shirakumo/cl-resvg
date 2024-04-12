@@ -69,4 +69,5 @@
    #:bbox
    #:node-p
    #:transform
-   #:render))
+   #:render
+   #:with-image))

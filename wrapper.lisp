@@ -143,3 +143,11 @@
           (render ptr))
         (render (cffi:null-pointer)))
     output))
+
+(defmacro with-image ((var source &rest init-options) &body body)
+  `(progn 
+     (init ,@init-options)
+     (let ((,var (make-image ,source)))
+       (unwind-protect (let ((,var ,var))
+                         ,@body)
+         (free ,var)))))
