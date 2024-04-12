@@ -140,6 +140,7 @@ If no such node exists, an error of type RESVG-ERROR is signalled.
 The transform is a 3x2 single-float matrix. If no simple-array is
 passed, one is created and returned for you.
 
+See MAKE-TRANSFORM
 See IMAGE (type)")
   
   (function render
@@ -155,6 +156,7 @@ If the TRANSFORM is given, it should be a 3x2 single-float
 simple-array vector, by which the image is transformed before output.
 
 See IMAGE (type)
+See MAKE-TRANSFORM
 See SIZE")
 
   (function with-image
@@ -167,4 +169,14 @@ image.
 See INIT
 See IMAGE (type)
 See MAKE-IMAGE
-See FREE"))
+See FREE")
+
+  (function make-transform
+    "Create a transform matrix.
+
+X-OFFSET and Y-OFFSET represent a translation.
+X-SCALE and Y-SCALE represent a scaling.
+ANGLE represents a rotation.
+
+See RENDER"))
+

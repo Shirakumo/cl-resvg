@@ -70,4 +70,5 @@
    #:node-p
    #:transform
    #:render
-   #:with-image))
+   #:with-image
+   #:make-transform))
