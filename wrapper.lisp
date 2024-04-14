@@ -46,7 +46,7 @@
      (cffi:with-pointer-to-vector-data (ptr source)
        (resvg:load-font-data *options* ptr (length source))))
     (pathname
-     (check-error (resvg:load-font-file *options* source)))))
+     (check-error (resvg:load-font-file *options* (uiop:native-namestring source))))))
 
 (defun shutdown ()
   (when *options*
@@ -76,7 +76,7 @@
                     (cffi:with-foreign-string (ptr source)
                       (resvg:parse-from-data ptr (length source) *options* tree)))
                    (pathname
-                    (resvg:parse-from-file source *options* tree))))
+                    (resvg:parse-from-file (uiop:native-namestring source) *options* tree))))
     (%make-image (cffi:mem-ref tree :pointer))))
 
 (defmethod free ((image image))
@@ -121,28 +121,39 @@
       (error 'resvg-error :code :no-such-node)))
   transform)
 
+(defun make-transform (&key (x-offset 0) (y-offset 0) (scale 1) (x-scale scale) (y-scale scale) (angle 0))
+  (let ((arr (make-array 6 :element-type 'single-float :initial-element 0f0))
+        (cos (cos (float angle 0f0)))
+        (sin (sin (float angle 0f0))))
+    ;; Matrix is column-major...
+    (setf (aref arr 0) (* cos (float x-scale 0f0)))
+    (setf (aref arr 1) (+ sin))
+    (setf (aref arr 2) (- sin))
+    (setf (aref arr 3) (* cos (float y-scale 0f0)))
+    (setf (aref arr 4) (float x-offset 0f0))
+    (setf (aref arr 5) (float y-offset 0f0))
+    arr))
+
 (defun render (image &key node output width height transform)
   ;; Default width and height
   (unless (and width height)
     (destructuring-bind (w . h) (size image node)
-      (unless width (setf width w))
-      (unless height (setf height h))))
+      (unless width (setf width (round w)))
+      (unless height (setf height (round h)))))
   ;; Default the output
   (unless output
     (setf output (make-array (* 4 width height) :element-type '(unsigned-byte 8))))
-  (flet ((render (transform)
-           ;; OK, actually do the render now.
-           (cffi:with-pointer-to-vector-data (ptr output)
-             (if node
-                 (unless (resvg:render-node (ptr image) node transform width height ptr)
-                   (error 'resvg-error :code :no-such-node))
-                 (resvg:render (ptr image) transform width height ptr)))))
-    ;; Default the transform
-    (if transform
-        (cffi:with-pointer-to-vector-data (ptr transform)
-          (render ptr))
-        (render (cffi:null-pointer)))
-    output))
+  ;; Default the transform
+  (unless transform
+    (setf transform (load-time-value (make-transform))))
+  (cffi:with-pointer-to-vector-data (tptr transform)
+    (cffi:with-pointer-to-vector-data (ptr output)
+      (float-features:with-float-traps-masked T
+        (if node
+            (unless (resvg:render-node (ptr image) node tptr width height ptr)
+              (error 'resvg-error :code :no-such-node))
+            (resvg:render (ptr image) tptr width height ptr)))))
+  (values output width height))
 
 (defmacro with-image ((var source &rest init-options) &body body)
   `(progn 
@@ -152,25 +163,21 @@
                          ,@body)
          (free ,var)))))
 
-(defun make-transform (&key (x-offset 0) (y-offset 0) (scale 1) (x-scale scale) (y-scale scale) (angle 0))
-  (let ((arr (make-array 6 :element-type 'single-float :initial-element 0f0))
-        (cos (cos (float angle 0f0)))
-        (sin (sin (float angle 0f0))))
-    (setf (aref arr 0) (* cos (float x-scale 0f0)))
-    (setf (aref arr 1) (- sin))
-    (setf (aref arr 3) (+ sin))
-    (setf (aref arr 4) (* cos (float y-scale 0f0)))
-    (setf (aref arr 2) (float x-offset 0f0))
-    (setf (aref arr 5) (float y-offset 0f0))
-    arr))
-
 (defun render-scaled (image width height &key node output)
   (destructuring-bind (image-width . image-height) (size image node)
     (cond ((not (or width height))
            (error "WIDTH or HEIGHT must be specified."))
           (width
-           (setf height (* image-height (/ image-width width))))
+           (setf height (round (* image-height (/ image-width width)))))
           (height
-           (setf width (* image-width (/ image-height height)))))
+           (setf width (round (* image-width (/ image-height height))))))
     (render image :width width :height height :output output :node node
                   :transform (make-transform :x-scale (/ width image-width) :y-scale (/ height image-height)))))
+
+#++
+(defun test (in &optional (out (make-pathname :type "png" :defaults in)))
+  (with-image (svg in)
+    (multiple-value-bind (data w h) (render svg :transform (make-transform :scale 0.25))
+      (print (list w h (viewbox svg) (bbox svg)))
+      (zpng:write-png (make-instance 'zpng:png :color-type :truecolor-alpha :width w :height h :image-data data)
+                      out))))

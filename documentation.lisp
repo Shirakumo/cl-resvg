@@ -155,6 +155,11 @@ and returned for you.
 If the TRANSFORM is given, it should be a 3x2 single-float
 simple-array vector, by which the image is transformed before output.
 
+Returns three values:
+  The output pixel array
+  The width in pixels
+  The height in pixels
+
 See IMAGE (type)
 See MAKE-TRANSFORM
 See RENDER-SCALED
