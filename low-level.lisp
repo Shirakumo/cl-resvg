@@ -124,7 +124,7 @@
   (options :pointer))
 
 (cffi:defcfun (parse-from-file "resvg_parse_tree_from_file") error
-  (path :pointer)
+  (path :string)
   (options :pointer)
   (tree :pointer))
 
