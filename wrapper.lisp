@@ -46,7 +46,7 @@
      (cffi:with-pointer-to-vector-data (ptr source)
        (resvg:load-font-data *options* ptr (length source))))
     (pathname
-     (check-error (resvg:load-font-file *options* (uiop:native-namestring source))))))
+     (check-error (resvg:load-font-file *options* (pathname-utils:native-namestring source))))))
 
 (defun shutdown ()
   (when *options*
@@ -76,7 +76,7 @@
                     (cffi:with-foreign-string (ptr source)
                       (resvg:parse-from-data ptr (length source) *options* tree)))
                    (pathname
-                    (resvg:parse-from-file (uiop:native-namestring source) *options* tree))))
+                    (resvg:parse-from-file (pathname-utils:native-namestring source) *options* tree))))
     (%make-image (cffi:mem-ref tree :pointer))))
 
 (defmethod free ((image image))

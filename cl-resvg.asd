@@ -13,5 +13,6 @@
                (:file "wrapper")
                (:file "documentation"))
   :depends-on (:documentation-utils
+               :pathname-utils
                :float-features
                :cffi))
